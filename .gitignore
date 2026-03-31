@@ -1,0 +1,6 @@
+*
+!.gitignore
+!package.json
+!index.html
+!index.js
+!style.css
