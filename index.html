@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Editor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header id="toolbar">
+      <div class="tool-group">
+        <button id="tool-select" class="tool-btn active" title="Markera (S)">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path d="M4 2 L4 14 L7 11 L9.5 16 L11 15 L8.5 10 L13 10 Z" fill="currentColor"/></svg>
+          Välj
+        </button>
+      </div>
+      <div class="tool-group">
+        <button id="tool-line" class="tool-btn" title="Rita linje (L)">
+          <svg width="18" height="18" viewBox="0 0 18 18"><line x1="2" y1="16" x2="16" y2="2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Linje
+        </button>
+        <button id="tool-arc" class="tool-btn" title="Rita båge (B)">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path d="M 2 16 A 14 14 0 0 1 16 2" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+          Båge
+        </button>
+        <button id="tool-rect" class="tool-btn" title="Rita fyrkant (R)">
+          <svg width="18" height="18" viewBox="0 0 18 18"><rect x="2" y="3" width="14" height="12" rx="1" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+          Fyrkant
+        </button>
+        <button id="tool-circle" class="tool-btn" title="Rita cirkel (C)">
+          <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+          Cirkel
+        </button>
+      </div>
+      <div class="tool-group" id="style-props-group">
+        <label class="color-prop" title="Linjefärg (klicka för palett)">
+          <span>Linje</span>
+          <span class="color-swatch-btn" id="swatch-stroke" style="background:#000000"></span>
+        </label>
+        <label class="color-prop" id="fill-prop" title="Fyllningsfärg (klicka för palett)">
+          <span>Fyll</span>
+          <span class="color-swatch-btn" id="swatch-fill"></span>
+        </label>
+        <label class="color-prop" title="Linjetjocklek">
+          <span>Tjocklek</span>
+          <input type="number" id="stroke-width" value="2" min="0.5" max="20" step="0.5">
+        </label>
+        <label class="color-prop" title="Sträcktyp">
+          <span>Stil</span>
+          <span class="dash-btns">
+            <button class="dash-btn active" data-dash="solid" title="Heldragen"><svg width="20" height="8"><line x1="1" y1="4" x2="19" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <button class="dash-btn" data-dash="dashed" title="Streckad"><svg width="20" height="8"><line x1="1" y1="4" x2="19" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 3"/></svg></button>
+            <button class="dash-btn" data-dash="dotted" title="Prickad"><svg width="20" height="8"><line x1="1" y1="4" x2="19" y2="4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.01 4"/></svg></button>
+          </span>
+        </label>
+      </div>
+
+      <div class="tool-group" id="group-tool-group">
+        <button id="btn-group" class="tool-btn" title="Gruppera/Dela upp (Ctrl+G)">Gruppera</button>
+      </div>
+
+      <div class="toolbar-spacer">
+        <span id="status-tool">Välj</span>
+        <span id="status-sep">·</span>
+        <span id="status-pos"></span>
+      </div>
+
+      <div class="tool-group">
+        <button id="btn-theme" title="Byt tema">☾ Tema: mörk</button>
+      </div>
+      <div class="tool-group">
+        <button id="btn-toggle-layers" class="active" title="Visa/dölj elementpanel">Element</button>
+        <button id="btn-toggle-code" class="active" title="Visa/dölj SVG kod">Kod</button>
+        <button id="btn-toggle-preview" class="active" title="Visa/dölj förhandsvisning">Förhandsvisning</button>
+      </div>
+      <div class="tool-group">
+        <button id="btn-download" title="Ladda ner SVG">Ladda ner</button>
+        <button id="btn-open" title="Öppna">Öppna</button>
+      </div>
+      <div class="tool-group" style="border-right:none; padding-right:0">
+        <button id="btn-clear" title="Börja om">Börja om</button>
+      </div>
+    </header>
+
+    <div id="workspace">
+      <aside id="layers-panel">
+        <div id="layers-header"><span>Element</span><button id="btn-new-group" title="Ny tom grupp">+</button></div>
+        <div id="layers-list"></div>
+        <div class="panel-resizer" id="layers-resizer"></div>
+      </aside>
+      <div id="canvas-area">
+        <main id="canvas-container">
+          <svg id="canvas" xmlns="http://www.w3.org/2000/svg"></svg>
+        </main>
+        <div class="h-resizer" id="preview-resizer"></div>
+        <div id="preview-panel">
+          <div id="preview-header">
+            <span>Förhandsvisning</span>
+            <button id="btn-preview-pause">⏸ Pausa</button>
+          </div>
+          <iframe id="preview-iframe" sandbox="allow-scripts" allowtransparency="true"></iframe>
+        </div>
+      </div>
+
+      <aside id="code-panel">
+        <div class="panel-resizer" id="code-resizer"></div>
+        <div id="code-header">
+          <span>SVG kod</span>
+          <button id="btn-copy">Kopiera</button>
+        </div>
+        <div class="code-editor-wrap" id="svg-code-wrap">
+          <pre id="code-view"><code id="code-content"></code></pre>
+          <textarea id="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+        </div>
+        <div class="h-resizer" id="anim-resizer"></div>
+        <div id="anim-header">
+          <span>JS Animation</span>
+          <button id="btn-anim-preview">Förhandsvisa</button>
+        </div>
+        <div id="anim-wrap">
+          <div class="anim-section" id="anim-sec-vars">
+            <div class="anim-section-label"><span class="anim-sec-chev">›</span>SVG element<button id="btn-vars-settings" class="anim-sec-settings-btn">Visa inställningar</button></div>
+            <div id="vars-settings">
+              <label><input type="checkbox" id="vars-include-groups"> Inkludera grupper</label>
+            </div>
+            <div class="anim-section-body" id="anim-vars-body">
+              <div id="anim-vars-list"></div>
+            </div>
+          </div>
+          <div class="anim-section" id="anim-sec-decl">
+            <div class="anim-section-label"><span class="anim-sec-chev">›</span>Variabler</div>
+            <div class="anim-section-body" id="anim-decl-body">
+              <textarea id="anim-decl-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder=""></textarea>
+            </div>
+          </div>
+          <div class="anim-section" id="anim-sec-loop">
+            <div class="anim-section-label"><span class="anim-sec-chev">›</span>Loop<button id="btn-loop-settings" class="anim-sec-settings-btn">Visa inställningar</button></div>
+            <div id="loop-settings">
+              <label>FPS <input type="number" id="loop-fps" value="60" min="1" max="120" step="1" disabled><input type="checkbox" id="loop-fps-disable" checked> Obegränsad</label>
+            </div>
+            <div class="anim-section-body" id="anim-loop-body">
+              <textarea id="anim-loop-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div id="ctx-menu">
+    <button data-action="copy">Kopiera</button>
+    <button data-action="cut">Klipp ut</button>
+    <button data-action="paste">Klistra in</button>
+    <div class="ctx-sep"></div>
+    <button data-action="to-front">Längst fram</button>
+    <button data-action="forward">Flytta framåt</button>
+    <button data-action="backward">Flytta bakåt</button>
+    <button data-action="to-back">Längst bak</button>
+    <div class="ctx-sep"></div>
+    <button data-action="rename">Egenskaper</button>
+    <div class="ctx-sep"></div>
+    <button data-action="delete" class="ctx-danger">Radera</button>
+  </div>
+
+  <div id="color-palette">
+    <div id="cp-none"></div>
+    <div id="cp-grays" class="cp-swatches"></div>
+    <div class="cp-divider"></div>
+    <div class="cp-label">Pastellfärger</div>
+    <div id="cp-pastels" class="cp-swatches"></div>
+    <div class="cp-label" id="cp-recent-label">Senast valda</div>
+    <div id="cp-recent" class="cp-swatches"></div>
+    <div class="cp-footer">
+      <input type="color" id="cp-native" title="Anpassad färg">
+      <input type="text" id="cp-hex" placeholder="#rrggbb" maxlength="7" spellcheck="false">
+      <button id="cp-hex-ok">OK</button>
+    </div>
+  </div>
+
+  <div id="obj-modal" style="display:none">
+    <div id="obj-modal-box">
+      <div id="obj-modal-title">Egenskaper</div>
+      <div class="obj-modal-field">
+        <label for="obj-modal-name">Namn</label>
+        <input type="text" id="obj-modal-name" placeholder="visningsnamn" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="obj-modal-field">
+        <label for="obj-modal-svgid">SVG id</label>
+        <input type="text" id="obj-modal-svgid" placeholder="min-form" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="obj-modal-field">
+        <label for="obj-modal-vis">Synlig</label>
+        <input type="checkbox" id="obj-modal-vis" checked>
+      </div>
+      <div class="obj-modal-attrs-section">
+        <div class="obj-modal-attrs-header">
+          <span>Attribut</span>
+          <button type="button" id="obj-modal-add-attr">+ Attribut</button>
+        </div>
+        <div id="obj-modal-attrs-list"></div>
+      </div>
+      <div class="obj-modal-actions">
+        <button id="obj-modal-cancel">Avbryt</button>
+        <button id="obj-modal-save" class="active">Spara</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="anim-preview-modal" style="display:none">
+    <div id="anim-preview-box">
+      <div id="anim-preview-header">
+        <span>Sammansatt JS</span>
+        <button id="btn-anim-preview-close">✕</button>
+      </div>
+      <pre id="anim-preview-code"></pre>
+    </div>
+  </div>
+
+  <div id="open-modal" style="display:none">
+    <div id="open-modal-box">
+      <div class="simple-modal-title">Öppna</div>
+      <div id="open-modal-examples">
+        <button id="btn-example-1">Exempel 1 – orbital animation</button>
+      </div>
+      <div class="simple-modal-actions">
+        <button id="open-modal-close">Stäng</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirm-modal" style="display:none">
+    <div id="confirm-modal-box">
+      <div class="simple-modal-title">Börja om?</div>
+      <div id="confirm-modal-text">Alla element och animationskod raderas. Detta går inte att ångra.</div>
+      <div class="simple-modal-actions">
+        <button id="confirm-modal-cancel">Avbryt</button>
+        <button id="confirm-modal-ok" class="active">Börja om</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>
