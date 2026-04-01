@@ -19,6 +19,8 @@
   --hover-stroke:#d93025;
   --code-bg:     #f5f5f5;
   --code-border: #ccc;
+  --tbtn-border: #888;
+  --tbtn-border-active: rgba(255,255,255,0.3);
 }
 
 /* ---- Dark theme ---- */
@@ -36,6 +38,8 @@ html.dark {
   --hover-stroke:#ff5f57;
   --code-bg:     #212121;
   --code-border: #3a3a3a;
+  --tbtn-border: #555;
+  --tbtn-border-active: rgba(255,255,255,0.2);
 }
 
 body {
@@ -110,21 +114,28 @@ button:active { opacity: 0.75; }
   margin-top: -6px;
   margin-bottom: -6px;
   margin-right: -12px;
+  gap: 8px;
 }
 #toolbar-right .tool-group {
   display: flex;
   gap: 0;
   padding: 0;
-  border-right: none;
-  border-left: 1px solid var(--border);
+  border: none;
   align-items: stretch;
 }
 #toolbar-right button {
   border-radius: 0;
-  border: none;
+  border-top: none;
+  border-bottom: none;
+  border-left: 1px solid var(--tbtn-border);
+  border-right: 1px solid var(--tbtn-border);
   align-self: stretch;
   padding-top: 0;
   padding-bottom: 0;
+}
+#toolbar-right button.active {
+  border-left-color: var(--tbtn-border-active);
+  border-right-color: var(--tbtn-border-active);
 }
 
 .toolbar-spacer {
