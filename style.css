@@ -102,7 +102,30 @@ button.active {
 
 button:active { opacity: 0.75; }
 .tool-btn { padding: 4px 8px; }
-#btn-theme { font-size: 16px; padding: 2px 6px; }
+#btn-theme { font-size: 16px; }
+
+#toolbar-right {
+  display: flex;
+  align-self: stretch;
+  margin-top: -6px;
+  margin-bottom: -6px;
+  margin-right: -12px;
+}
+#toolbar-right .tool-group {
+  display: flex;
+  gap: 0;
+  padding: 0;
+  border-right: none;
+  border-left: 1px solid var(--border);
+  align-items: stretch;
+}
+#toolbar-right button {
+  border-radius: 0;
+  border: none;
+  align-self: stretch;
+  padding-top: 0;
+  padding-bottom: 0;
+}
 
 .toolbar-spacer {
   flex: 1;
